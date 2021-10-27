@@ -52,24 +52,23 @@ void drawBarrier(int index, int i, int j) {
 
 void keyPressed() {
   if (keyCode == RIGHT){
-    currentIndex += 7;
+    if (currentIndex < 42)  currentIndex += 7;
     if (currentIndex == barriers[0]) print("barrier");
   }
   else if (keyCode == LEFT){
-    currentIndex -= 7;
+    if (currentIndex > 6)  currentIndex -= 7;
     if (currentIndex == barriers[0]) print("barrier");
   }
   else if (keyCode == UP){
-    currentIndex -= 1;
+    if (currentIndex % 7 != 0) currentIndex -= 1;
     if (currentIndex == barriers[0]) print("barrier");
   }
   else if (keyCode == DOWN){
-    currentIndex += 1;
+    if (currentIndex != 6 && currentIndex != 13 && currentIndex != 20 && currentIndex != 27 && currentIndex != 34 && currentIndex != 41 && currentIndex != 48)  currentIndex += 1;
     if (currentIndex == barriers[0]) print("barrier");
   }
   redraw();
 }
-
 
 class Square {
   int myX, myY, myNum, mySize;
@@ -82,9 +81,8 @@ class Square {
   
   void show(){
     fill(255);
-    //print(myNum + ", ");
-    if (myNum == 100) fill(0);
     if (myNum == 200) fill(255,0,0);
+    if (myNum == 100) fill(0);
     rect(myX, myY, mySize, mySize);
   }
 }
