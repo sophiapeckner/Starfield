@@ -36,7 +36,30 @@ class Particle{
   
   void show(){
     fill(myColor);
-    ellipse((float)myX, (float)myY, 15, 15);
+    //ellipse((float)myX, (float)myY, 10, 10);
+    pushMatrix();
+    pushStyle();
+    translate((float) (myX-73), (float) (myY-120));
+    scale(0.5, 0.5);
+    noFill();
+    stroke(0, 255, 0);
+    beginShape();
+    bezier(138, 256, 132, 231, 154, 207, 166, 195);
+    popStyle();
+    popMatrix();
+    
+    pushMatrix();
+    pushStyle();
+    translate((float)myX, (float)myY);
+    scale(0.3, 0.3);
+    rotate(0);
+    fill(255,0,0);
+    stroke(0);
+    beginShape();
+    curveVertex(-42,34); curveVertex(-26,24); curveVertex(-6,26); curveVertex(9,19); curveVertex(32,24); curveVertex(35,61); curveVertex(4,85); curveVertex(-34,72); curveVertex(-42,34); curveVertex(-26,24); curveVertex(-6,26);
+    endShape();
+    popStyle();
+    popMatrix();
   }
 }
 
