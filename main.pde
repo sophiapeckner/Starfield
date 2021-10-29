@@ -1,29 +1,41 @@
+import java.util.Arrays;
+
 Square[] mySquare;
 int squareSize = (int)400/7 - 10;
 int currentIndex = 6;
+int endIndex = 42;
 
-int[] barriers = {20};
-// ^ save the {i} of those that will be saved 
+int myCount = (int) (49 * 0.29);
+int[] barriers; 
 
 void setup() {
   size(400,400);
+  populateBarrier(myCount);
   noLoop();
 }
 
 void draw() {
+  // Keeps track of squares drawn
   int c = 0;
-  mySquare = new Square[49];
-  
+  mySquare = new Square[49]; 
   for (int i = 0; i < 7; i++){
     for (int j = 0; j < 7; j++){
-      // check if {count} is a certain num and if is then color it, change {count} when keypressed
+      // Draw grid's squares
       mySquare[c] = new Square(i*squareSize + 35, 
                                j*squareSize + 35,
                                squareSize,
-                               c);
+                               "");
+     
+     if (drawBarrier(c)) {
+       mySquare[c] = new Square(i*squareSize + 35, 
+                               j*squareSize + 35,
+                               squareSize,
+                               "red");
+     }
+     
      drawCurrentPos(c, i, j);
-     drawBarrier(c, i, j);
-      c++;
+     drawEndPos(c, i, j);
+     c++;
     }
   }
   
@@ -37,17 +49,37 @@ void drawCurrentPos(int index, int i, int j) {
     mySquare[index] = new Square(i*squareSize + 35, 
                                  j*squareSize + 35,
                                  squareSize,
-                                 100);
+                                 "black");
   }
 }
 
-void drawBarrier(int index, int i, int j) {
-  if (index == barriers[0]){
+void drawEndPos(int index, int i, int j) {
+  if (index == endIndex) {
     mySquare[index] = new Square(i*squareSize + 35, 
                                  j*squareSize + 35,
                                  squareSize,
-                                 200);
+                                 "black");
   }
+}
+
+// ~ Populate barrier[] with random-positioned blocks
+void populateBarrier(int count) {
+  barriers = new int[count];
+  int i = 0;
+  while (i < count) {
+    int randomPos = (int) (Math.random() * 49);
+    if (randomPos != currentIndex && randomPos != endIndex && !drawBarrier(randomPos)) {
+      barriers[i] = randomPos;
+      i++;
+    }
+  }
+}
+
+public boolean drawBarrier(int index) {
+  for (int i = 0; i < barriers.length; i++){
+    if (index == barriers[i]) return true;
+  }
+  return false;
 }
 
 void keyPressed() {
@@ -72,17 +104,32 @@ void keyPressed() {
 
 class Square {
   int myX, myY, myNum, mySize;
-  Square(int x, int y, int size, int num){
+  String myColor;
+  Square(int x, int y, int size, String paint){
     myX = x;
     myY = y;
     mySize = size;
-    myNum = num;
+    myColor = paint;
   }
   
   void show(){
     fill(255);
-    if (myNum == 200) fill(255,0,0);
-    if (myNum == 100) fill(0);
+    if (myColor == "red") fill(255,0,0);
+    if (myColor == "black") fill(0);
     rect(myX, myY, mySize, mySize);
+  }
+}
+
+class Barrier {
+  int myX, myY;
+  
+  Barrier(int x, int y) {
+    myX = x;
+    myY = y;
+  }
+  
+  void show(){
+    fill(255,0,0);
+    rect(myX, myY, squareSize, squareSize);
   }
 }
