@@ -1,27 +1,60 @@
 Particle[] p;
+long startTime = System.currentTimeMillis();
+int textX = 10;
 
-void setup(){
+void setup() {
   size(300,300);
   p = new Particle[500];
   
-  for (int i = 0; i < p.length; i++){
+  for (int i = 0; i < p.length; i++) {
     p[i] = new Particle(((2 * PI) / 500) * i);
   }
 }
 
-void draw(){
-  background(255, 230, 150);
-  for (int i = 0; i < p.length; i++){
-    p[i].show();
-    p[i].move();
+void draw() {
+  //background(255, 230, 150);
+  background(0);
+  long endTime = System.currentTimeMillis();
+  if (endTime - startTime >= 0) { //<= 2000
+    animateText("IM", textX, 80);
+    animateText("GOING", textX, 160);
+    animateText("TO", textX, 240);
+    textX++;
+    
   }
+  /*
+  else if (endTime - startTime <= 4000) {
+    text("ch", 150, 150);
+  }
+  else if (endTime - startTime <= 6000) {
+    text("ch", 150, 150);
+  }
+  else if (endTime - startTime <= 8000) {
+    text("ch", 150, 150);
+  }
+  else if (endTime - startTime <= 10000) {
+    text("cherry bomb", 150, 150);
+    for (int i = 0; i < p.length; i++){
+      p[i].show();
+      p[i].move();
+    }
+  }
+  */
 }
 
-class Particle{
+void animateText(String text, int x, int y) {
+  textSize(80);
+  fill(#d00000);
+  text(text, x, y);
+  fill(#e85d04);
+  text(text, x-5, y-5);
+}
+
+class Particle {
   double myX, myY, myAngle, mySpeed;
   int myColor;
   
-  Particle(double angle){
+  Particle(double angle) {
     myColor = (int) (Math.random() * 255);
     myX = 150;
     myY = 150;
@@ -29,12 +62,12 @@ class Particle{
     myAngle = angle;
   }
   
-  void move(){
+  void move() {
     myX += Math.cos(myAngle) * mySpeed;
     myY += Math.sin(myAngle) * mySpeed;
   }
   
-  void show(){
+  void show() {
     fill(myColor);
     //ellipse((float)myX, (float)myY, 10, 10);
     pushMatrix();
@@ -63,6 +96,6 @@ class Particle{
   }
 }
 
-class OddballParticle{
+class OddballParticle {
   //your code here
 }
