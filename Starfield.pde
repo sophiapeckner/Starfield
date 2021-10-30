@@ -1,6 +1,5 @@
 Particle[] p;
 long startTime = System.currentTimeMillis();
-int textX = 10;
 
 void setup() {
   size(300,300);
@@ -15,34 +14,29 @@ void draw() {
   //background(255, 230, 150);
   background(0);
   long endTime = System.currentTimeMillis();
-  if (endTime - startTime >= 0) { //<= 2000
-    animateText("IM", textX, 80);
-    animateText("GOING", textX, 160);
-    animateText("TO", textX, 240);
-    textX++;
-    
+  if (endTime - startTime <= 2000) { //<= 2000
+    prettyText("IM", 10, 80);
+    prettyText("GOING", 10, 160);
+    prettyText("TO", 10, 240);
   }
-  /*
-  else if (endTime - startTime <= 4000) {
-    text("ch", 150, 150);
+  
+  else if (endTime - startTime <= 5000) {
+    prettyText("CH", 30, 80);
+    prettyText("CH", 80, 160);
+    prettyText("CH", 130, 240);
   }
-  else if (endTime - startTime <= 6000) {
-    text("ch", 150, 150);
-  }
-  else if (endTime - startTime <= 8000) {
-    text("ch", 150, 150);
-  }
-  else if (endTime - startTime <= 10000) {
-    text("cherry bomb", 150, 150);
+  
+  else if (endTime - startTime >= 5000) {
+    prettyText("CHERRY", 20, 130);
+    prettyText("BOMB", 50, 210);
     for (int i = 0; i < p.length; i++){
       p[i].show();
       p[i].move();
     }
   }
-  */
 }
 
-void animateText(String text, int x, int y) {
+void prettyText(String text, int x, int y) {
   textSize(80);
   fill(#d00000);
   text(text, x, y);
