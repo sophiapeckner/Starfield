@@ -92,7 +92,10 @@ public int newBarrierPos(String direction, int currentPos) {
     if (currentPos % 7 == 0) return currentPos + 6;
     else                     return currentPos - 1;
   }
-  return currentPos++;
+  else {
+    if (currentIndex == 6 || currentIndex == 13 || currentIndex == 20 || currentIndex == 27 || currentIndex == 34 || currentIndex == 41 || currentIndex == 48) return currentPos - 6;
+    else                     return currentPos + 1;
+  }
   //else                     barriers[i] = barrierIndex + 1;
 }  
 // Check to see if that index is in barriers[]
