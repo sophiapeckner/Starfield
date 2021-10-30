@@ -66,7 +66,7 @@ class Particle {
     //ellipse((float)myX, (float)myY, 10, 10);
     pushMatrix();
     pushStyle();
-    translate((float) (myX-73), (float) (myY-120));
+    translate((int) (myX-73), (int) (myY-120));
     scale(0.5, 0.5);
     noFill();
     stroke(0, 255, 0);
@@ -77,7 +77,7 @@ class Particle {
     
     pushMatrix();
     pushStyle();
-    translate((float)myX, (float)myY);
+    translate((int)myX, (int)myY);
     scale(0.3, 0.3);
     rotate(0);
     fill(255,0,0);
