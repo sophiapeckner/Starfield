@@ -14,7 +14,7 @@ void draw() {
   //background(255, 230, 150);
   background(0);
   long endTime = System.currentTimeMillis();
-  if (endTime - startTime <= 2000) { //<= 2000
+  if (endTime - startTime <= 3000) {
     prettyText("IM", 10, 80);
     prettyText("GOING", 10, 160);
     prettyText("TO", 10, 240);
