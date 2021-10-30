@@ -12,6 +12,7 @@ int currentIndex = 42;
 int endIndex = 6;
 
 void setup() {
+  frameRate(4);
   size(400,400); 
   // Populate with random indexes
   populateBarrier(numBarriers);
@@ -37,7 +38,6 @@ void populateBarrier(int myCount) {
       i++;
     }
   }
-  for (int j = 0; j < barriers.length; j++) print(barriers[j] + ", ");
 }
 
 void splitBarrierIntoRows() {
@@ -52,8 +52,7 @@ void splitBarrierIntoRows() {
     else                           rowNum = 7;
     barriersData.put(barriers[i], rowNum);
   }
-  println();
-  print(barriersData);
+  print(barriersData + "\n");
 }
 
 void determineRowDirection() {
@@ -61,8 +60,7 @@ void determineRowDirection() {
     if (Math.random() < 0.5)  rowDirection.put(i, "left");
     else                      rowDirection.put(i, "right");
   }
-  println();
-  print(rowDirection);
+  print(rowDirection + "\n");
 }
 
 void updateBarrier() {
@@ -83,8 +81,6 @@ void updateBarrier() {
   }
   barriersData = updatedBarrier;
   updateGrid();
-  println();
-  for (int j = 0; j < barriers.length; j++) print(barriers[j] + ", ");
 }
 
 public int newBarrierPos(String direction, int currentPos) {
@@ -92,12 +88,13 @@ public int newBarrierPos(String direction, int currentPos) {
     if (currentPos % 7 == 0) return currentPos + 6;
     else                     return currentPos - 1;
   }
+  
   else {
-    if (currentIndex == 6 || currentIndex == 13 || currentIndex == 20 || currentIndex == 27 || currentIndex == 34 || currentIndex == 41 || currentIndex == 48) return currentPos - 6;
+    if (currentPos == 6 || currentPos == 13 || currentPos == 20 || currentPos == 27 || currentPos == 34 || currentPos == 41 || currentPos == 48) return currentPos - 6;
     else                     return currentPos + 1;
   }
-  //else                     barriers[i] = barrierIndex + 1;
-}  
+}
+
 // Check to see if that index is in barriers[]
 public boolean inBarrier(int index) {
     for (int i = 0; i < barriers.length; i++)
