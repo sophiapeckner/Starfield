@@ -6,7 +6,8 @@ HashMap<Integer, String> rowDirection = new HashMap<Integer, String>();
 int numBarriers = (int) (49 * 0.29);    // Length of barriers[]
 
 Square[] mySquare;
-int squareSize = (int) 400/7 - 10;
+int gridLength = 7;
+int squareSize = (int) 400/gridLength - 10;
 
 int currentIndex = 42;
 int endIndex = 6;
@@ -42,14 +43,14 @@ void populateBarrier(int myCount) {
 
 void splitBarrierIntoRows() {
   for (int i = 0; i < barriers.length; i++) {
-    int rowNum;
-    if (barriers[i] <= 6)          rowNum = 1;
-    else if (barriers[i] <= 13)    rowNum = 2;
-    else if (barriers[i] <= 20)    rowNum = 3;
-    else if (barriers[i] <= 27)    rowNum = 4;
-    else if (barriers[i] <= 34)    rowNum = 5;
-    else if (barriers[i] <= 41)    rowNum = 6;
-    else                           rowNum = 7;
+    int rowNum = int(barriers[i]/7);
+    //if (barriers[i] <= 6)          rowNum = 1;
+    //else if (barriers[i] <= 13)    rowNum = 2;
+    //else if (barriers[i] <= 20)    rowNum = 3;
+    //else if (barriers[i] <= 27)    rowNum = 4;
+    //else if (barriers[i] <= 34)    rowNum = 5;
+    //else if (barriers[i] <= 41)    rowNum = 6;
+    //else                           rowNum = 7;
     barriersData.put(barriers[i], rowNum);
   }
   print(barriersData + "\n");
@@ -85,12 +86,12 @@ void updateBarrier() {
 
 public int newBarrierPos(String direction, int currentPos) {
   if (direction == "left") {
-    if (currentPos % 7 == 0) return currentPos + 6;
+    if (currentPos % gridLength == 0) return currentPos + 6;
     else                     return currentPos - 1;
   }
   
   else {
-    if ((currentPos + 1) % 7 == 0) return currentPos - 6;
+    if ((currentPos + 1) % gridLength == 0) return currentPos - 6;
     else                     return currentPos + 1;
   }
 }
@@ -106,8 +107,8 @@ void updateGrid() {
   int myIndex = 0;    // Count the index of squares (0 - 48)
   mySquare = new Square[49];
   
-  for (int y = 0; y < 7; y++){
-    for (int x = 0; x < 7; x++){
+  for (int y = 0; y < gridLength; y++){
+    for (int x = 0; x < gridLength; x++){
       String myColor;
       
       if (myIndex == currentIndex)       myColor = "green";
@@ -130,17 +131,17 @@ void showGrid() {
 
 void keyPressed() {
   if (keyCode == RIGHT){
-    if ((currentIndex + 1) % 7 != 0) currentIndex += 1;
+    if ((currentIndex + 1) % gridLength != 0) currentIndex += 1;
     //currentIndex!= 6 && currentIndex != 13 && currentIndex != 20 && currentIndex != 27 && currentIndex != 34 && currentIndex != 41 && currentIndex != 48
   }
   else if (keyCode == LEFT){
-    if (currentIndex % 7 != 0) currentIndex -= 1;
+    if (currentIndex % gridLength != 0) currentIndex -= 1;
   }
   else if (keyCode == UP){
-    if (currentIndex > 6) currentIndex -= 7;
+    if (currentIndex > 6) currentIndex -= gridLength;
   }
   else if (keyCode == DOWN){
-    if (currentIndex < 42)  currentIndex += 7;
+    if (currentIndex < 42)  currentIndex += gridLength;
   }
   redraw();
 }
