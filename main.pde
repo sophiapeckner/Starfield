@@ -90,7 +90,7 @@ public int newBarrierPos(String direction, int currentPos) {
   }
   
   else {
-    if (currentPos == 6 || currentPos == 13 || currentPos == 20 || currentPos == 27 || currentPos == 34 || currentPos == 41 || currentPos == 48) return currentPos - 6;
+    if ((currentPos + 1) % 7 == 0) return currentPos - 6;
     else                     return currentPos + 1;
   }
 }
@@ -130,7 +130,8 @@ void showGrid() {
 
 void keyPressed() {
   if (keyCode == RIGHT){
-    if (currentIndex != 6 && currentIndex != 13 && currentIndex != 20 && currentIndex != 27 && currentIndex != 34 && currentIndex != 41 && currentIndex != 48) currentIndex += 1;
+    if ((currentIndex + 1) % 7 != 0) currentIndex += 1;
+    //currentIndex!= 6 && currentIndex != 13 && currentIndex != 20 && currentIndex != 27 && currentIndex != 34 && currentIndex != 41 && currentIndex != 48
   }
   else if (keyCode == LEFT){
     if (currentIndex % 7 != 0) currentIndex -= 1;
