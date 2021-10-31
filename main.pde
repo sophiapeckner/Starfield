@@ -43,7 +43,7 @@ void populateBarrier(int myCount) {
 
 void splitBarrierIntoRows() {
   for (int i = 0; i < barriers.length; i++) {
-    int rowNum = int(barriers[i]/7);
+    int rowNum = int(barriers[i]/gridLength);
     //if (barriers[i] <= 6)          rowNum = 1;
     //else if (barriers[i] <= 13)    rowNum = 2;
     //else if (barriers[i] <= 20)    rowNum = 3;
@@ -57,7 +57,7 @@ void splitBarrierIntoRows() {
 }
 
 void determineRowDirection() {
-  for (int i = 1; i < 8; i++) {
+  for (int i = 0; i < 7; i++) {
     if (Math.random() < 0.5)  rowDirection.put(i, "left");
     else                      rowDirection.put(i, "right");
   }
@@ -87,12 +87,12 @@ void updateBarrier() {
 public int newBarrierPos(String direction, int currentPos) {
   if (direction == "left") {
     if (currentPos % gridLength == 0) return currentPos + 6;
-    else                     return currentPos - 1;
+    else return currentPos - 1;
   }
   
   else {
     if ((currentPos + 1) % gridLength == 0) return currentPos - 6;
-    else                     return currentPos + 1;
+    else return currentPos + 1;
   }
 }
 
@@ -111,6 +111,7 @@ void updateGrid() {
     for (int x = 0; x < gridLength; x++){
       String myColor;
       
+      // Fill the squares depending on it's 'purpose'
       if (myIndex == currentIndex)       myColor = "green";
       else if (myIndex == endIndex)      myColor = "black";
       else if (inBarrier(myIndex))       myColor = "red";
