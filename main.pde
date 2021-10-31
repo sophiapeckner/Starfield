@@ -1,7 +1,7 @@
 import java.util.HashMap;
 
 int[] barriers;
-HashMap<Integer, Integer> barriersData = new HashMap<Integer, Integer>();
+HashMap<Float, Integer> barriersData = new HashMap<Float, Integer>();
 HashMap<Integer, String> rowDirection = new HashMap<Integer, String>();
 int numBarriers = (int) (49 * 0.29);    // Length of barriers[]
 
@@ -13,7 +13,7 @@ int currentIndex = 42;
 int endIndex = 6;
 
 void setup() {
-  frameRate(4);
+  frameRate(30);
   size(400,400); 
   // Populate with random indexes
   populateBarrier(numBarriers);
@@ -51,7 +51,7 @@ void splitBarrierIntoRows() {
     //else if (barriers[i] <= 34)    rowNum = 5;
     //else if (barriers[i] <= 41)    rowNum = 6;
     //else                           rowNum = 7;
-    barriersData.put(barriers[i], rowNum);
+    barriersData.put(float(barriers[i]), rowNum);
   }
   print(barriersData + "\n");
 }
@@ -66,17 +66,18 @@ void determineRowDirection() {
 
 void updateBarrier() {
   barriers = new int[numBarriers];
-  HashMap<Integer, Integer> updatedBarrier = new HashMap<Integer, Integer>();
+  HashMap<Float, Integer> updatedBarrier = new HashMap<Float, Integer>();
   int i = 0;
-  for (int barrierIndex : barriersData.keySet()) {
+  for (float barrierIndex : barriersData.keySet()) {
     int rowNum = barriersData.get(barrierIndex);
     String direction = rowDirection.get(rowNum);
     
     //if (direction == "left") barriers[i] = barrierIndex - 1;
     //else                     barriers[i] = barrierIndex + 1;
     
-    int newPos = newBarrierPos(direction, barrierIndex);
-    barriers[i] = newPos;
+    float newPos = newBarrierPos(direction, barrierIndex);
+    if (direction == "left")   barriers[i] = (int) Math.ceil(newPos);
+    else barriers[i] = (int) Math.floor(newPos);
     updatedBarrier.put(newPos, rowNum);
     i++;
   }
@@ -84,15 +85,14 @@ void updateBarrier() {
   updateGrid();
 }
 
-public int newBarrierPos(String direction, int currentPos) {
+public float newBarrierPos(String direction, float currentPos) {
   if (direction == "left") {
-    if (currentPos % gridLength == 0) return currentPos + 6;
-    else return currentPos - 1;
+    if (Math.ceil(currentPos + 0.5) % gridLength == 0) return currentPos + 6;
+    else return currentPos - 0.01;
   }
-  
   else {
-    if ((currentPos + 1) % gridLength == 0) return currentPos - 6;
-    else return currentPos + 1;
+    if (int(currentPos + 1) % gridLength == 0) return currentPos - 6;
+    else return currentPos + 0.01;
   }
 }
 
@@ -124,6 +124,12 @@ void updateGrid() {
     }
   }
   showGrid();
+  if (inBarrier(currentIndex)) {
+    textSize(128);
+    fill(0);
+    text("GAME OVER", 0, 150);
+    noLoop();
+  }
 }
 
 void showGrid() {
@@ -148,10 +154,10 @@ void keyPressed() {
 }
 
 class Square {
-  int myX, myY;
+  float myX, myY;
   String myColor;
   
-  Square(int x, int y, String paint){
+  Square(float x, float y, String paint){
     myX = x;
     myY = y;
     myColor = paint;
@@ -204,3 +210,4 @@ class Barrier {
   
 }
 */
+
