@@ -1,5 +1,5 @@
 Particle[] p;
-long startTime = System.currentTimeMillis();
+long startTime = millis();
 
 void setup() {
   size(300,300);
@@ -13,7 +13,7 @@ void setup() {
 void draw() {
   //background(255, 230, 150);
   background(0);
-  long endTime = System.currentTimeMillis();
+  long endTime = millis();
   if (endTime - startTime <= 3000) {
     prettyText("IM", 10, 80);
     prettyText("GOING", 10, 160);
