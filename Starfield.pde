@@ -2,7 +2,7 @@ Particle[] p;
 long startTime = millis();
 
 void setup() {
-  size(300,300);
+  size(350,350);
   p = new Particle[500];
   
   for (int i = 0; i < p.length; i++) {
