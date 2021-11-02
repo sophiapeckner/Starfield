@@ -6,7 +6,7 @@ void setup() {
   p = new Particle[500];
   
   for (int i = 0; i < p.length; i++) {
-    p[i] = new Particle(((2 * PI) / 500) * i);
+    p[i] = new Particle(((2 * 3.14) / 500) * i);
   }
 }
 
