@@ -36,12 +36,12 @@ void draw() {
   }
 }
 
-void prettyText(String text, int x, int y) {
+void prettyText(String content, int x, int y) {
   textSize(80);
   fill(#d00000);
-  text(text, x, y);
+  text(content, x, y);
   fill(#e85d04);
-  text(text, x-5, y-5);
+  text(content, x-5, y-5);
 }
 
 class Particle {
