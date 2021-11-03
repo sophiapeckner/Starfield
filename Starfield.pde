@@ -6,7 +6,8 @@ void setup() {
   p = new Particle[500];
   
   for (int i = 0; i < p.length; i++) {
-    p[i] = new Particle(((2 * 3.14) / 500) * i);
+    p[i] = new Particle();
+    p[i].myAngle = ((2 * 3.14) / 500) * i;
   }
 }
 
@@ -15,9 +16,9 @@ void draw() {
   background(0);
   long endTime = millis();
   if (endTime - startTime <= 3000) {
-    prettyText("IM", 10, 80);
-    prettyText("GOING", 10, 160);
-    prettyText("TO", 10, 240);
+    prettyText("IM", 20, 80);
+    prettyText("GOING", 20, 160);
+    prettyText("TO", 20, 240);
   }
   
   else if (endTime - startTime <= 5000) {
@@ -31,7 +32,7 @@ void draw() {
     prettyText("BOMB", 50, 210);
     for (int i = 0; i < p.length; i++){
       p[i].show();
-      p[i].move();
+      p[i].move(p[i].myAngle);
     }
   }
 }
@@ -48,15 +49,15 @@ class Particle {
   double myX, myY, myAngle, mySpeed;
   int myColor;
   
-  Particle(double angle) {
+  Particle() {  //double angle
     myColor = (int) (Math.random() * 255);
     myX = 150;
     myY = 150;
     mySpeed = (int)(Math.random() * 50) + 1;
-    myAngle = angle;
+    myAngle = 0;  //angle
   }
   
-  void move() {
+  void move(double angle) {
     myX += Math.cos(myAngle) * mySpeed;
     myY += Math.sin(myAngle) * mySpeed;
   }
@@ -90,6 +91,14 @@ class Particle {
   }
 }
 
-class OddballParticle {
+class OddballParticle extends Particle {
   //your code here
+  OddballParticle() {
+    myColor = (int) (Math.random() * 255);
+    myX = 150;
+    myY = 150;
+    mySpeed = (int)(Math.random() * 50) + 1;
+    myAngle = 6.3;
+  }
+  
 }
