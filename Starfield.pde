@@ -5,9 +5,14 @@ void setup() {
   size(350,350);
   p = new Particle[500];
   
-  for (int i = 0; i < p.length; i++) {
+  for (int i = 0; i < 400; i++) {
     p[i] = new Particle();
     p[i].myAngle = ((2 * 3.14) / 500) * i;
+  }
+  
+  for (int j = 400; j < p.length; j++) {
+    p[j] = new OddballParticle();
+    p[j].myAngle = j;
   }
 }
 
@@ -58,8 +63,8 @@ class Particle {
   }
   
   void move(double angle) {
-    myX += Math.cos(myAngle) * mySpeed;
-    myY += Math.sin(myAngle) * mySpeed;
+    myX += Math.cos(angle) * mySpeed;
+    myY += Math.sin(angle) * mySpeed;
   }
   
   void show() {
@@ -101,4 +106,19 @@ class OddballParticle extends Particle {
     myAngle = 6.3;
   }
   
+  void show() {
+    pushMatrix();
+    pushStyle();
+    translate((int)myX, (int)myY);
+    scale(0.3,0.3);
+    rotate(0);
+    fill(#e85d04);
+    stroke(#d00000);
+    strokeWeight(4);
+    beginShape();
+    curveVertex(3,-77); curveVertex(13,-48); curveVertex(4,-5); curveVertex(-5,-47); curveVertex(3,-77); curveVertex(13,-48); curveVertex(4,-5); /**/
+    endShape();
+    popStyle();
+    popMatrix();
+  }
 }
