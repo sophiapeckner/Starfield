@@ -1,4 +1,6 @@
 import java.util.HashMap;
+import java.util.Random;
+
 int page = 1;
 
 // Button Coord.
@@ -8,17 +10,21 @@ int learnMoreRectY = 185;
 int startRectX = 150;
 int startRectY = 365;
 
+HashMap<String, Float> levels = new HashMap<String, Float>();
+
 int[] barriers;
 HashMap<Float, Integer> barriersData = new HashMap<Float, Integer>();
 HashMap<Integer, String> rowDirection = new HashMap<Integer, String>();
-int numBarriers = (int) (49 * 0.29);    // Length of barriers[]
+boolean stateEmpty = true;
+String state;
+int numBarriers;    // Length of barriers[]
 
 Square[] mySquare;
 int gridLength = 7;
 int gridWidth = 7;
 int squareSize = (int) 400/gridLength - 10; 
 
-int start = gridLength * (gridWidth - 1);
+int start = gridLength * (gridWidth - 1); // 42
 int end = 6;
 int currentIndex = gridLength * (gridWidth - 1);
 int endIndex = 6;
@@ -26,9 +32,7 @@ int endIndex = 6;
 void setup() {
   size(400,400); 
   frameRate(30);                  // Slow down the game speed
-  populateBarrier(numBarriers);  // Populate with random indexes
-  splitBarrierIntoRows();        // Getting the barrier indexes row number
-  determineRowDirection();       // Use barriersData to determine a random row direction
+  populateLevels();
   //noLoop();
 }
 
@@ -82,7 +86,18 @@ void page2() {
 }
 
 void page3() {
-  updateGrid();
+  if (stateEmpty) {
+    currentIndex = start;
+    barriersData = new HashMap<Float, Integer>();
+    state = chooseRandomState();
+    numBarriers = (int) (49 * levels.get(state));
+    levels.remove(state);
+    populateBarrier(numBarriers);  // Populate with random indexes
+    splitBarrierIntoRows();        // Getting the barrier indexes row number
+    determineRowDirection();       // Use barriersData to determine a random row direction
+    stateEmpty = false;
+  }
+  prettyText(state, 10, 30, "button");
   updateBarrier();
 }
 
@@ -98,6 +113,8 @@ void populateBarrier(int myCount) {
       i++;
     }
   }
+  println();
+  for (int j = 0; j < barriers.length; j++) print(barriers[j] + ", ");
 }
 
 void splitBarrierIntoRows() {
@@ -126,11 +143,15 @@ void updateBarrier() {
     //else                     barriers[i] = barrierIndex + 1;
     
     float newPos = newBarrierPos(direction, barrierIndex);
-    if (direction == "left")   barriers[i] = (int) Math.ceil(newPos);
-    else barriers[i] = (int) Math.floor(newPos);
+    
+    if (barrierIndex == gridLength * (gridWidth - 1))  barriers[i] = (gridLength * gridWidth) - 1;
+    else if (direction == "left")    barriers[i] = (int) Math.ceil(newPos);
+    else if (direction == "right")   barriers[i] = (int) Math.floor(newPos);
     updatedBarrier.put(newPos, rowNum);
     i++;
   }
+  println();
+  for (int j = 0; j < barriers.length; j++) print(barriers[j] + ", ");
   barriersData = updatedBarrier;
   updateGrid();
 }
@@ -151,6 +172,20 @@ public boolean inBarrier(int index) {
     for (int i = 0; i < barriers.length; i++)
       if (index == barriers[i]) return true;
     return false;
+}
+
+// LEVEL DATA //
+void populateLevels() {
+  levels.put("New Jersey", 0.302);
+  levels.put("Arizona", 0.889);
+  //levels.put("Arizona", 0.089);
+}
+
+public String chooseRandomState() {
+  Object[] crunchifyKeys = levels.keySet().toArray();
+  int index = (int)(Math.random() * (crunchifyKeys.length-1));
+  Object key = crunchifyKeys[index];
+  return (String) key;
 }
 
 // GAME GRID //
@@ -179,7 +214,9 @@ void updateGrid() {
     textSize(128);
     fill(0);
     text("GAME OVER", 0, 150);
-    noLoop();
+    stateEmpty = true;
+    print("game over!");
+    page3();
   }
 }
 
@@ -237,7 +274,6 @@ void mousePressed() {
   else if (mouseX > startRectX && mouseX < startRectX + 100 && mouseY > startRectY && mouseY < startRectY + 25){
     // Pressed Start
     page = 3;
-    
   }
 }
 
