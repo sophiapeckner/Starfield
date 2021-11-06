@@ -37,7 +37,7 @@ String outcome;
 void setup() {
   size(400, 400); 
   frameRate(30);      // Slow down the game speed
-  reader = createReader("/Users/sophiapeckner/Downloads/percentage1.csv");    // Loads the file. File is downloaded from: https://www.kff.org/other/state-indicator/mental-health-care-health-professional-shortage-areas-hpsas/?currentTimeframe=0&sortModel=%7B%22colId%22:%22Location%22,%22sort%22:%22asc%22%7D
+  reader = createReader("percentage1.csv");    // Loads the file. File is downloaded from: https://www.kff.org/other/state-indicator/mental-health-care-health-professional-shortage-areas-hpsas/?currentTimeframe=0&sortModel=%7B%22colId%22:%22Location%22,%22sort%22:%22asc%22%7D
   getData();
   populateStateLevels();
   playBtn = new Button(190, 220, 130, 35, "Play Game", 2);
@@ -236,7 +236,6 @@ void getData() {
     try {
       line = reader.readLine();
     } catch (IOException e) {
-      e.printStackTrace();
       line = null;
     }
     if (line != null) {
@@ -429,7 +428,6 @@ class Button{
       if (stateBarrierPercent != 0.0) {  // stateBarrierPercent == 0.0 for any button not associated with a state
         numBarriers = (int) (stateBarrierPercent * (gridLength*gridLength));
         state = label;
-        print(numBarriers);
       }
       page = nextPage;
     }
