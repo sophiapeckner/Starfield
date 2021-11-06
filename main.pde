@@ -1,6 +1,7 @@
 import java.util.HashMap;
 BufferedReader reader;
 String line;
+PImage img;
 
 int page = 1;    // Tracks screen
 
@@ -9,6 +10,7 @@ Button playBtn;
 Button learnMoreBtn;
 Button startBtn;
 Button backToLevelsBtn;
+Button homeBtn;
 Button[] stateLevels = new Button[49];
 
 String[] states = new String[49];   // 49 U.S. states available on the KFF Dataset (no data for Vermont)
@@ -30,38 +32,44 @@ int start = gridLength * (gridWidth - 1);          // Tracks the starting positi
 int currentIndex = gridLength * (gridWidth - 1);   // The square that the box (moved by the user) is located
 int endIndex = gridLength - 1;                     // Track where the box must always move to
 
+String outcome;
+
 void setup() {
   size(400, 400); 
   frameRate(30);      // Slow down the game speed
   reader = createReader("/Users/sophiapeckner/Downloads/percentage1.csv");    // Loads the file. File is downloaded from: https://www.kff.org/other/state-indicator/mental-health-care-health-professional-shortage-areas-hpsas/?currentTimeframe=0&sortModel=%7B%22colId%22:%22Location%22,%22sort%22:%22asc%22%7D
   getData();
   populateStateLevels();
-  playBtn = new Button(40, 170, 100, 25, "Play Game", 2);
-  learnMoreBtn = new Button(40, 205, 100, 25, "Learn More", 2);
-  startBtn = new Button(180, 365, 100, 25, "Start", 3);
+  playBtn = new Button(190, 220, 130, 35, "Play Game", 2);
+  learnMoreBtn = new Button(190, 265, 130, 35, "Learn More", 6);
+  startBtn = new Button(150, 360, 100, 30, "Start", 3);
   backToLevelsBtn = new Button(180, 365, 100, 25, "Back To Levels", 3);
+  homeBtn = new Button(5, 5, 40, 25, "Home", 1);
 }
 
 void draw() { 
   background(#F2F3AE);
+  myBackground();
   
   if (page == 1)        page1();
   else if (page == 2)   page2();
   else if (page == 3)   page3();
   else if (page == 4)   page4();
   else if (page == 5)   page5();
+  else if (page == 6)   page6();
 }
 
 // PAGES //
 void page1() {      // Home Page
-  prettyText("APP NAME", 40, 130, "title");
+  blob();
+  prettyText("APP NAME", 120, 170, "title");
   // Shows both buttons
   playBtn.display();
   learnMoreBtn.display();
 }
 
 void page2() {      // Instructions Page
-  prettyText("ABOUT", 40, 60, "title");
+  prettyText("ABOUT", 40, 90, "heading");
   // Array holding each sentence in the ABOUT section
   String[] about = {
     "This game will visually demonstrate the barriers people face",
@@ -73,10 +81,10 @@ void page2() {      // Instructions Page
     "professional shortage."};
 
   for (int i = 0; i < about.length; i ++) {
-    prettyText(about[i], 20, 90 + (20 * i), "text");
+    prettyText(about[i], 20, 120 + (20 * i), "text");
   }
   
-  prettyText("GAMEPLAY", 40, 280, "title");
+  prettyText("GAMEPLAY", 40, 280, "heading");
   
   String[] gamePlay = {
     "(1) Use arrow keys to change your current position",
@@ -87,6 +95,7 @@ void page2() {      // Instructions Page
     prettyText(gamePlay[i], 20, 310 + (20 * i), "text");
   }
   startBtn.display();
+  homeBtn.display();
 }
 
 void page3() {          // Levels Page (Menu Of All Possible States)
@@ -94,6 +103,7 @@ void page3() {          // Levels Page (Menu Of All Possible States)
   for (int i = 0; i < stateLevels.length; i++){
     stateLevels[i].display();
   }
+  homeBtn.display();
 }
 
 void page4() {          // Play Game
@@ -105,19 +115,52 @@ void page4() {          // Play Game
     determineRowDirection();       // Use barriersData to determine a random row direction
     gameOn = false;                // This way the barrier indexes aren't constantly changing
   }
+  prettyText(state + ", " + numBarriers + "% barriers", 20, 20, "text");
   updateBarrier();
 }
 
 void page5() {         // After Lose/ Win Page
-  prettyText("GOOD GAME", 40, 280, "title");
+  if (outcome == "W") {
+    prettyText("Congrats", 60, 70, "title");
+  } else {
+    prettyText("Game Over", 40, 70, "title");
+  }
   int needMet = 100 - numBarriers; 
   prettyText("In " + state + ", " + needMet + "% of need is met", 20, 90, "text");
-  prettyText("The barriers in the game represent the % of need that is NOT met", 20, 110, "text");
+  prettyText("The barriers represent the % of need that is NOT met", 20, 110, "text");
+  prettyText("For some people, these barriers are their reality.", 20, 130, "text");
   backToLevelsBtn.display();
+  homeBtn.display();
+}
+
+void page6() {
+  prettyText("56% of patients faced barriers when accessing", 40, 30, "text");
+  prettyText("mental health care", 130, 50, "text");
+  prettyText("- National Council on Behavioral Health", 10, 70, "text");
+  // Array holding each sentence in the ABOUT section
+  String[] learnMore = {
+    "I created this app to visually show unequal access in",
+    "mental health care throughout the United States. These",
+    "barriers are even more prominent in ethnic and racial",
+    "minorities. This is a problem considering how important",
+    " mental health is to a person's well being.",
+    "According to a study by the Cohen Veterans Network",
+    "and National Counsil for Behavioral Health, barriers",
+    "Americans face to mental health care include: ",
+    "",
+    "- Lack of awareness on where to seek treatment,",
+    "- High cost and insufficient insurance coverage,",
+    "- Social Stigma"
+  };
+
+  for (int i = 0; i < learnMore.length; i ++) {
+    prettyText(learnMore[i], 20, 110 + (20 * i), "text");
+  }
+  homeBtn.display();
 }
 
 // BARRIERS //
-// Populating an array of random indexe between 0 and total length of the grid (gridLength * gridLength)
+// Populating an array of random indexes between 0 and total length of the grid (gridLength * gridLength)
 void populateBarrier(int myCount) {
   barriers = new int[myCount];
   int i = 0;
@@ -244,6 +287,8 @@ void updateGrid() {
   showGrid();
   // Checks whether reached the end or collided with a barrier
   if ((inBarrier(currentIndex) || currentIndex == endIndex) && currentIndex != start) {
+    if (inBarrier(currentIndex))        outcome = "L";
+    else if (currentIndex == endIndex)  outcome = "W";
     gameOn = true;
     page = 5;
   }
@@ -262,11 +307,41 @@ void prettyText( String word, int x, int y, String type) {
     fill(#FC9E4F);
     text(word, x-2, y-2);
   }
+  else if (type == "heading") {
+    textSize(30);
+    strokeWeight(2);
+    fill(#FF521B);
+    text(word, x, y);
+  }
   else if (type == "text") {
     fill(#020122);
     textSize(15);
     text(word, x, y);
   }
+}
+
+void myBackground() {
+  strokeWeight(2);
+  stroke(#FC9E4F);
+  line(0, 30, 400, 30);
+  line(0, 370, 400, 370);
+  noFill();
+  bezier(0, 102, 113, 83, 55, 25, 151, 1);
+  bezier(263, 399, 317, 380, 322, 330, 399, 324);
+}
+
+void blob() {
+  pushMatrix();
+  pushStyle();
+  translate(200, 200);
+  scale(1, 1);
+  fill(#EDD382);
+  strokeWeight(0);
+  beginShape();
+  curveVertex(53,-92); curveVertex(109,-92); curveVertex(158,-61); curveVertex(139,-19); curveVertex(70,9); curveVertex(30,1); curveVertex(0,-21); curveVertex(-44,-11); curveVertex(-63,-69); curveVertex(-6,-94); curveVertex(53,-92); curveVertex(109,-92); curveVertex(158,-61); /**/
+  endShape();
+  popStyle();
+  popMatrix();
 }
   
 // USER INTERACTION //
@@ -290,6 +365,8 @@ void mousePressed() {
   playBtn.clicked(mouseX, mouseY);
   startBtn.clicked(mouseX, mouseY);
   backToLevelsBtn.clicked(mouseX, mouseY);
+  homeBtn.clicked(mouseX, mouseY);
+  learnMoreBtn.clicked(mouseX, mouseY);
   if (page == 3) {
     for (int i = 0; i < stateLevels.length; i++){
       stateLevels[i].clicked(mouseX, mouseY);
@@ -317,6 +394,7 @@ class Square {
   }
 }
 
+// Based off: https://kdoore.gitbook.io/cs1335-java-and-processing/object-oriented-programming/buttons_as_objects/button-class
 class Button{
   // Member Variables
   float x,y; //position
@@ -337,8 +415,8 @@ class Button{
   
   // Member Functions
   void display(){
-    fill(255);
-    rect(x, y, w, h);
+    fill(#EDD382);
+    rect(x, y, w, h, 10);
     fill(0);
     textAlign(CENTER);
     textSize(14);
