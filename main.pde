@@ -1,17 +1,23 @@
 import java.util.HashMap;
 import java.util.Random;
+BufferedReader reader;
+String line;
 
 Button playBtn;
 Button learnMoreBtn;
 Button startBtn;
 Button backToLevelsBtn;
-Button[] stateLevels;
+Button[] stateLevels = new Button[49];
 
 int page = 1;
 
 //HashMap<String, Float> levels = new HashMap<String, Float>();
-String[] states = {"Alabama", "Colorado", "New Jersey"};
-Float[] percentBarriers = {0.759, 0.659, 0.302};
+//String[] states = {"Alabama", "Colorado", "New Jersey"};
+//Float[] percentBarriers = {0.759, 0.659, 0.302};
+
+int i = 0;
+String[] states = new String[49];
+Float[] unmet = new Float[49];
 
 int[] barriers;
 HashMap<Float, Integer> barriersData = new HashMap<Float, Integer>();
@@ -33,28 +39,24 @@ int endIndex = gridLength - 1;
 void setup() {
   size(400,400); 
   frameRate(30);                  // Slow down the game speed
+  reader = createReader("/Users/sophiapeckner/Downloads/percentage1.csv");
   
   playBtn = new Button(40, 170, 100, 25, "Play Game", 2);
   learnMoreBtn = new Button(40, 205, 100, 25, "Learn More", 2);
   startBtn = new Button(180, 365, 100, 25, "Start", 3);
   backToLevelsBtn = new Button(180, 365, 100, 25, "Back To Levels", 3);
-  
-  stateLevels = new Button[states.length];
-  for (int i = 0; i < stateLevels.length; i++){
-    int percent = (int) (percentBarriers[i] * 100);
-    stateLevels[i] = new Button(150, 40 + (30*i), 150, 25, states[i] + ": " + percent + "% barriers", 4);
-    stateLevels[i].stateBarrierPercent = percentBarriers[i];
-  }
   //noLoop();
 }
 
 void draw() { 
   background(#F2F3AE);
-  if (page == 1)        page1();
+  
+  if (page == 1) page1();
   else if (page == 2)   page2();
   else if (page == 3)   page3();
   else if (page == 4)   page4();
   else if (page == 5)   page5();
+  getData();
 }
 
 // PAGES //
@@ -93,6 +95,18 @@ void page2() {
 }
 
 void page3() {
+  int t = 0;
+  for (int i = 0; i < 13; i++){
+    for (int j = 0; j < 4; j++){
+      if (t < 49) {
+        int percent = (int) (unmet[t] * 100);
+        stateLevels[t] = new Button(j*100, i*25 + 40, 100, 25, states[t], 4);
+        stateLevels[t].stateBarrierPercent = unmet[t];
+        t++;
+      }
+    }
+  }
+  
   for (int i = 0; i < stateLevels.length; i++){
     stateLevels[i].display();
   }
@@ -191,27 +205,24 @@ public boolean inBarrier(int index) {
 }
 
 // LEVEL DATA //
-void populateLevels() {
-  //levels.put("Alabama", 0.759);
-  //levels.put("Colorado", 0.659);
-  //levels.put("New Jersey", 0.302);
-  //levels.put("Arizona", 0.889);
-  ////levels.put("Arizona", 0.089);
-}
-
-//public String chooseRandomState() {
-//  Object[] crunchifyKeys = levels.keySet().toArray();
-//  println(crunchifyKeys);
-//  if (crunchifyKeys.length > 0) {
-//    int index = (int)(Math.random() * (crunchifyKeys.length-1));
-//    Object key = crunchifyKeys[index];
-//    return (String) key;
-//  }
-//  else { 
-//    page = 4;
-//    return "Done";
-//  }
-//}
+void getData() {
+  try {
+    line = reader.readLine();
+  } catch (IOException e) {
+    e.printStackTrace();
+    line = null;
+  }
+  if (line == null) {
+    
+  } else {
+    String[] pieces = split(line, ",");
+    states[i] = (String) pieces[0];
+    unmet[i] = Float.parseFloat(pieces[2]);
+    i++;
+    //int y = int(pieces[1]);
+    //point(x, y); 
+  }
+} 
 
 // GAME GRID //
 void updateGrid() {
@@ -283,9 +294,11 @@ void mousePressed() {
   playBtn.clicked(mouseX, mouseY);
   startBtn.clicked(mouseX, mouseY);
   backToLevelsBtn.clicked(mouseX, mouseY);
-  for (int i = 0; i < stateLevels.length; i++){
-    stateLevels[i].clicked(mouseX, mouseY);
-  }
+  //if (page == 3) {
+  //  for (int i = 0; i < stateLevels.length; i++){
+  //    stateLevels[i].clicked(mouseX, mouseY);
+  //  }
+  //}
 }
 
 class Square {
