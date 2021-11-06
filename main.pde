@@ -41,6 +41,7 @@ void draw() {
   if (page == 1)        page1();
   else if (page == 2)   page2();
   else if (page == 3)   page3();
+  else if (page == 4)   page4();
 }
 
 // PAGES //
@@ -89,16 +90,22 @@ void page3() {
   if (stateEmpty) {
     currentIndex = start;
     barriersData = new HashMap<Float, Integer>();
-    state = chooseRandomState();
-    numBarriers = (int) (49 * levels.get(state));
-    levels.remove(state);
-    populateBarrier(numBarriers);  // Populate with random indexes
-    splitBarrierIntoRows();        // Getting the barrier indexes row number
-    determineRowDirection();       // Use barriersData to determine a random row direction
-    stateEmpty = false;
+    state = chooseRandomState(); 
+    if (state != "Done") {
+      numBarriers = (int) (49 * levels.get(state));
+      levels.remove(state);
+      populateBarrier(numBarriers);  // Populate with random indexes
+      splitBarrierIntoRows();        // Getting the barrier indexes row number
+      determineRowDirection();       // Use barriersData to determine a random row direction
+      stateEmpty = false;
+    }
   }
   prettyText(state, 10, 30, "button");
   updateBarrier();
+}
+
+void page4() {
+  prettyText("DONE", 40, 60, "title");
 }
 
 // BARRIERS //
@@ -113,8 +120,6 @@ void populateBarrier(int myCount) {
       i++;
     }
   }
-  println();
-  for (int j = 0; j < barriers.length; j++) print(barriers[j] + ", ");
 }
 
 void splitBarrierIntoRows() {
@@ -150,8 +155,6 @@ void updateBarrier() {
     updatedBarrier.put(newPos, rowNum);
     i++;
   }
-  println();
-  for (int j = 0; j < barriers.length; j++) print(barriers[j] + ", ");
   barriersData = updatedBarrier;
   updateGrid();
 }
@@ -176,6 +179,8 @@ public boolean inBarrier(int index) {
 
 // LEVEL DATA //
 void populateLevels() {
+  levels.put("Alabama", 0.759);
+  levels.put("Colorado", 0.659);
   levels.put("New Jersey", 0.302);
   levels.put("Arizona", 0.889);
   //levels.put("Arizona", 0.089);
@@ -183,9 +188,16 @@ void populateLevels() {
 
 public String chooseRandomState() {
   Object[] crunchifyKeys = levels.keySet().toArray();
-  int index = (int)(Math.random() * (crunchifyKeys.length-1));
-  Object key = crunchifyKeys[index];
-  return (String) key;
+  println(crunchifyKeys);
+  if (crunchifyKeys.length > 0) {
+    int index = (int)(Math.random() * (crunchifyKeys.length-1));
+    Object key = crunchifyKeys[index];
+    return (String) key;
+  }
+  else { 
+    page = 4;
+    return "Done";
+  }
 }
 
 // GAME GRID //
