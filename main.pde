@@ -4,6 +4,7 @@ import java.util.Random;
 Button playBtn;
 Button learnMoreBtn;
 Button startBtn;
+Button backToLevelsBtn;
 Button[] stateLevels;
 
 int page = 1;
@@ -36,10 +37,12 @@ void setup() {
   playBtn = new Button(40, 170, 100, 25, "Play Game", 2);
   learnMoreBtn = new Button(40, 205, 100, 25, "Learn More", 2);
   startBtn = new Button(180, 365, 100, 25, "Start", 3);
+  backToLevelsBtn = new Button(180, 365, 100, 25, "Back To Levels", 3);
   
   stateLevels = new Button[states.length];
   for (int i = 0; i < stateLevels.length; i++){
-    stateLevels[i] = new Button(150, 40 + (30*i), 100, 25, states[i], 4);
+    int percent = (int) (percentBarriers[i] * 100);
+    stateLevels[i] = new Button(150, 40 + (30*i), 150, 25, states[i] + ": " + percent + "% barriers", 4);
     stateLevels[i].stateBarrierPercent = percentBarriers[i];
   }
   //noLoop();
@@ -51,6 +54,7 @@ void draw() {
   else if (page == 2)   page2();
   else if (page == 3)   page3();
   else if (page == 4)   page4();
+  else if (page == 5)   page5();
 }
 
 // PAGES //
@@ -107,6 +111,14 @@ void page4() {
     gameOn = false;
   }
   updateBarrier();
+}
+
+void page5() { 
+  prettyText("GOOD GAME", 40, 280, "title");
+  int needMet = 100 - numBarriers; 
+  prettyText("In " + state + ", " + needMet + "% of need is met", 20, 90, "text");
+  prettyText("The barriers in the game represent the % of need that is NOT met", 20, 110, "text");
+  backToLevelsBtn.display();
 }
 
 // BARRIERS //
@@ -223,12 +235,9 @@ void updateGrid() {
     }
   }
   showGrid();
-  if (inBarrier(currentIndex) || currentIndex == endIndex) {
-    textSize(128);
-    fill(0);
-    text("GAME OVER", 0, 150);
+  if ((inBarrier(currentIndex) || currentIndex == endIndex) && currentIndex != start) {
     gameOn = true;
-    page = 3;
+    page = 5;
   }
 }
 
@@ -273,6 +282,7 @@ void keyPressed() {
 void mousePressed() {
   playBtn.clicked(mouseX, mouseY);
   startBtn.clicked(mouseX, mouseY);
+  backToLevelsBtn.clicked(mouseX, mouseY);
   for (int i = 0; i < stateLevels.length; i++){
     stateLevels[i].clicked(mouseX, mouseY);
   }
@@ -331,6 +341,8 @@ class Button{
     if( mx > x && mx < x + w  && my > y && my < y+h){ 
       if (stateBarrierPercent != 0.0) {
         numBarriers = (int) (stateBarrierPercent * (gridLength*gridLength));
+        state = label;
+        print(numBarriers);
       }
       page = nextPage;
     }
