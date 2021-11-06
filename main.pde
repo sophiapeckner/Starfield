@@ -40,7 +40,8 @@ void setup() {
   size(400,400); 
   frameRate(30);                  // Slow down the game speed
   reader = createReader("/Users/sophiapeckner/Downloads/percentage1.csv");
-  
+  getData();
+  populateStateLevels();
   playBtn = new Button(40, 170, 100, 25, "Play Game", 2);
   learnMoreBtn = new Button(40, 205, 100, 25, "Learn More", 2);
   startBtn = new Button(180, 365, 100, 25, "Start", 3);
@@ -56,7 +57,6 @@ void draw() {
   else if (page == 3)   page3();
   else if (page == 4)   page4();
   else if (page == 5)   page5();
-  getData();
 }
 
 // PAGES //
@@ -95,18 +95,6 @@ void page2() {
 }
 
 void page3() {
-  int t = 0;
-  for (int i = 0; i < 13; i++){
-    for (int j = 0; j < 4; j++){
-      if (t < 49) {
-        int percent = (int) (unmet[t] * 100);
-        stateLevels[t] = new Button(j*100, i*25 + 40, 100, 25, states[t], 4);
-        stateLevels[t].stateBarrierPercent = unmet[t];
-        t++;
-      }
-    }
-  }
-  
   for (int i = 0; i < stateLevels.length; i++){
     stateLevels[i].display();
   }
@@ -206,23 +194,36 @@ public boolean inBarrier(int index) {
 
 // LEVEL DATA //
 void getData() {
-  try {
-    line = reader.readLine();
-  } catch (IOException e) {
-    e.printStackTrace();
-    line = null;
-  }
-  if (line == null) {
-    
-  } else {
-    String[] pieces = split(line, ",");
-    states[i] = (String) pieces[0];
-    unmet[i] = Float.parseFloat(pieces[2]);
-    i++;
-    //int y = int(pieces[1]);
-    //point(x, y); 
+  for (int i = 0; i < states.length; i++) {
+    try {
+      line = reader.readLine();
+    } catch (IOException e) {
+      e.printStackTrace();
+      line = null;
+    }
+    if (line != null) {
+      String[] pieces = split(line, ",");
+      states[i] = (String) pieces[0];
+      unmet[i] = Float.parseFloat(pieces[2]);
+      //int y = int(pieces[1]);
+      //point(x, y);
+    }
   }
 } 
+
+void populateStateLevels() {
+  int t = 0;
+  for (int i = 0; i < 13; i++){
+    for (int j = 0; j < 4; j++){
+      if (t < 49) {
+        int percent = (int) (unmet[t] * 100);
+        stateLevels[t] = new Button(j*95+8, i*25 + 40, 95, 25, states[t], 4);
+        stateLevels[t].stateBarrierPercent = unmet[t];
+        t++;
+      }
+    }
+  }
+}
 
 // GAME GRID //
 void updateGrid() {
@@ -282,10 +283,10 @@ void keyPressed() {
     if (currentIndex % gridLength != 0) currentIndex -= 1;
   }
   else if (keyCode == UP){
-    if (currentIndex > 6) currentIndex -= gridLength;
+    if (currentIndex > gridLength - 1) currentIndex -= gridLength;
   }
   else if (keyCode == DOWN){
-    if (currentIndex < 42)  currentIndex += gridLength;
+    if (currentIndex < gridLength * (gridWidth - 1))  currentIndex += gridLength;
   }
   redraw();
 }  
@@ -294,11 +295,11 @@ void mousePressed() {
   playBtn.clicked(mouseX, mouseY);
   startBtn.clicked(mouseX, mouseY);
   backToLevelsBtn.clicked(mouseX, mouseY);
-  //if (page == 3) {
-  //  for (int i = 0; i < stateLevels.length; i++){
-  //    stateLevels[i].clicked(mouseX, mouseY);
-  //  }
-  //}
+  if (page == 3) {
+    for (int i = 0; i < stateLevels.length; i++){
+      stateLevels[i].clicked(mouseX, mouseY);
+    }
+  }
 }
 
 class Square {
