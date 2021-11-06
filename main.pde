@@ -1,38 +1,47 @@
 import java.util.HashMap;
 import java.util.Random;
 
+Button playBtn;
+Button learnMoreBtn;
+Button startBtn;
+Button[] stateLevels;
+
 int page = 1;
 
-// Button Coord.
-int startGameRectX = 35;
-int startGameRectY = 150;
-int learnMoreRectY = 185;
-int startRectX = 150;
-int startRectY = 365;
-
-HashMap<String, Float> levels = new HashMap<String, Float>();
+//HashMap<String, Float> levels = new HashMap<String, Float>();
+String[] states = {"Alabama", "Colorado", "New Jersey"};
+Float[] percentBarriers = {0.759, 0.659, 0.302};
 
 int[] barriers;
 HashMap<Float, Integer> barriersData = new HashMap<Float, Integer>();
 HashMap<Integer, String> rowDirection = new HashMap<Integer, String>();
-boolean stateEmpty = true;
+boolean gameOn = true;
 String state;
 int numBarriers;    // Length of barriers[]
 
 Square[] mySquare;
-int gridLength = 7;
-int gridWidth = 7;
+int gridLength = 10;
+int gridWidth = 10;
 int squareSize = (int) 400/gridLength - 10; 
 
 int start = gridLength * (gridWidth - 1); // 42
-int end = 6;
+//int end = gridLength - 1;
 int currentIndex = gridLength * (gridWidth - 1);
-int endIndex = 6;
+int endIndex = gridLength - 1;
 
 void setup() {
   size(400,400); 
   frameRate(30);                  // Slow down the game speed
-  populateLevels();
+  
+  playBtn = new Button(40, 170, 100, 25, "Play Game", 2);
+  learnMoreBtn = new Button(40, 205, 100, 25, "Learn More", 2);
+  startBtn = new Button(180, 365, 100, 25, "Start", 3);
+  
+  stateLevels = new Button[states.length];
+  for (int i = 0; i < stateLevels.length; i++){
+    stateLevels[i] = new Button(150, 40 + (30*i), 100, 25, states[i], 4);
+    stateLevels[i].stateBarrierPercent = percentBarriers[i];
+  }
   //noLoop();
 }
 
@@ -47,12 +56,8 @@ void draw() {
 // PAGES //
 void page1() {
   prettyText("APP NAME", 40, 130, "title");
-  prettyText("Play Game", 40, 170, "button");
-  noFill();
-  rect(startGameRectX, startGameRectY, 100, 25);
-  prettyText("Learn More", 40, 205, "button");
-  noFill();
-  rect(startGameRectX, learnMoreRectY, 100, 25);
+  playBtn.display();
+  learnMoreBtn.display();
 }
 
 void page2() {
@@ -80,32 +85,28 @@ void page2() {
   for (int i = 0; i < gamePlay.length; i ++) {
     prettyText(gamePlay[i], 20, 310 + (20 * i), "text");
   }
-  
-  prettyText("Start", 180, 385, "button");
-  noFill();
-  rect(startRectX, startRectY, 100, 25);
+  startBtn.display();
 }
 
 void page3() {
-  if (stateEmpty) {
-    currentIndex = start;
-    barriersData = new HashMap<Float, Integer>();
-    state = chooseRandomState(); 
-    if (state != "Done") {
-      numBarriers = (int) (49 * levels.get(state));
-      levels.remove(state);
-      populateBarrier(numBarriers);  // Populate with random indexes
-      splitBarrierIntoRows();        // Getting the barrier indexes row number
-      determineRowDirection();       // Use barriersData to determine a random row direction
-      stateEmpty = false;
-    }
+  for (int i = 0; i < stateLevels.length; i++){
+    stateLevels[i].display();
   }
-  prettyText(state, 10, 30, "button");
-  updateBarrier();
 }
 
 void page4() {
-  prettyText("DONE", 40, 60, "title");
+  if (gameOn) {
+    currentIndex = start;
+    barriersData = new HashMap<Float, Integer>();
+    //state = chooseRandomState(); 
+    //numBarriers = (int) ((gridLength*gridLength) * levels.get(state));
+    //levels.remove(state);
+    populateBarrier(numBarriers);  // Populate with random indexes
+    splitBarrierIntoRows();        // Getting the barrier indexes row number
+    determineRowDirection();       // Use barriersData to determine a random row direction
+    gameOn = false;
+  }
+  updateBarrier();
 }
 
 // BARRIERS //
@@ -114,7 +115,7 @@ void populateBarrier(int myCount) {
   barriers = new int[myCount];
   int i = 0;
   while (i < myCount) {
-    int randomPos = (int) (Math.random() * 49);
+    int randomPos = (int) (Math.random() * (gridLength*gridLength));
     if (randomPos != gridLength * (gridWidth - 1) && randomPos != endIndex && !inBarrier(randomPos)) {
       barriers[i] = randomPos;
       i++;
@@ -130,9 +131,9 @@ void splitBarrierIntoRows() {
 }
 
 void determineRowDirection() {
-  for (int i = 0; i < 7; i++) {
-    if (Math.random() < 0.5)  rowDirection.put(i, "left");
-    else                      rowDirection.put(i, "right");
+  for (int i = 0; i < gridLength; i++) {
+    if (Math.random() < 0.25)      rowDirection.put(i, "left");
+    else                        rowDirection.put(i, "right");
   }
 }
 
@@ -161,11 +162,11 @@ void updateBarrier() {
 
 public float newBarrierPos(String direction, float currentPos) {
   if (direction == "left") {
-    if (Math.ceil(currentPos + 0.5) % gridLength == 0) return currentPos + 6;
+    if (Math.ceil(currentPos + 0.5) % gridLength == 0) return currentPos + (gridLength-1);
     else return currentPos - 0.02;
   }
   else {
-    if (int(currentPos + 1) % gridLength == 0) return currentPos - 6;
+    if (int(currentPos + 1) % gridLength == 0) return currentPos - (gridLength-1);
     else return currentPos + 0.02;
   }
 }
@@ -179,31 +180,31 @@ public boolean inBarrier(int index) {
 
 // LEVEL DATA //
 void populateLevels() {
-  levels.put("Alabama", 0.759);
-  levels.put("Colorado", 0.659);
-  levels.put("New Jersey", 0.302);
-  levels.put("Arizona", 0.889);
-  //levels.put("Arizona", 0.089);
+  //levels.put("Alabama", 0.759);
+  //levels.put("Colorado", 0.659);
+  //levels.put("New Jersey", 0.302);
+  //levels.put("Arizona", 0.889);
+  ////levels.put("Arizona", 0.089);
 }
 
-public String chooseRandomState() {
-  Object[] crunchifyKeys = levels.keySet().toArray();
-  println(crunchifyKeys);
-  if (crunchifyKeys.length > 0) {
-    int index = (int)(Math.random() * (crunchifyKeys.length-1));
-    Object key = crunchifyKeys[index];
-    return (String) key;
-  }
-  else { 
-    page = 4;
-    return "Done";
-  }
-}
+//public String chooseRandomState() {
+//  Object[] crunchifyKeys = levels.keySet().toArray();
+//  println(crunchifyKeys);
+//  if (crunchifyKeys.length > 0) {
+//    int index = (int)(Math.random() * (crunchifyKeys.length-1));
+//    Object key = crunchifyKeys[index];
+//    return (String) key;
+//  }
+//  else { 
+//    page = 4;
+//    return "Done";
+//  }
+//}
 
 // GAME GRID //
 void updateGrid() {
   int myIndex = 0;    // Count the index of squares (0 - 48)
-  mySquare = new Square[49];
+  mySquare = new Square[gridLength*gridLength];
   
   for (int y = 0; y < gridLength; y++){
     for (int x = 0; x < gridWidth; x++){
@@ -226,9 +227,8 @@ void updateGrid() {
     textSize(128);
     fill(0);
     text("GAME OVER", 0, 150);
-    stateEmpty = true;
-    print("game over!");
-    page3();
+    gameOn = true;
+    page = 3;
   }
 }
 
@@ -244,11 +244,6 @@ void prettyText( String word, int x, int y, String type) {
     text(word, x, y);
     fill(#FC9E4F);
     text(word, x-2, y-2);
-  }
-  else if (type == "button") {
-    fill(#020122);
-    textSize(20);
-    text(word, x, y);
   }
   else if (type == "text") {
     fill(#020122);
@@ -276,16 +271,10 @@ void keyPressed() {
 }  
 
 void mousePressed() {
-  if (mouseX > startGameRectX && mouseX < startGameRectX + 100 && mouseY > startGameRectY && mouseY < startGameRectY + 25) {
-    // Pressed Play Game
-    page = 2;
-  } 
-  else if (mouseX > startGameRectX && mouseX < startGameRectX + 100 && mouseY > learnMoreRectY && mouseY < learnMoreRectY + 25){
-    // Pressed Learn More
-  }
-  else if (mouseX > startRectX && mouseX < startRectX + 100 && mouseY > startRectY && mouseY < startRectY + 25){
-    // Pressed Start
-    page = 3;
+  playBtn.clicked(mouseX, mouseY);
+  startBtn.clicked(mouseX, mouseY);
+  for (int i = 0; i < stateLevels.length; i++){
+    stateLevels[i].clicked(mouseX, mouseY);
   }
 }
 
@@ -306,5 +295,44 @@ class Square {
     if (myColor == "white") fill(255);
     
     rect(myX, myY, squareSize, squareSize);
+  }
+}
+
+class Button{
+  // Member Variables
+  float x,y; //position
+  float w,h; //size
+  String label;
+  float stateBarrierPercent;
+  int nextPage;
+  
+  // Constructor
+  Button(float myX, float myY, float myW, float myH, String myL, int next){
+    x = myX;
+    y = myY;
+    w = myW;
+    h = myH;
+    label = myL;
+    nextPage = next;
+  }
+  
+  // Member Functions
+  void display(){
+    fill(255);
+    rect(x, y, w, h);
+    fill(0);
+    textAlign(CENTER);
+    textSize(14);
+    text(label, x + w/2, y + (h/2));
+    textAlign(LEFT);
+  }
+
+  void clicked(int mx, int my){
+    if( mx > x && mx < x + w  && my > y && my < y+h){ 
+      if (stateBarrierPercent != 0.0) {
+        numBarriers = (int) (stateBarrierPercent * (gridLength*gridLength));
+      }
+      page = nextPage;
+    }
   }
 }
